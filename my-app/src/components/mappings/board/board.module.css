@@ -1,0 +1,18 @@
+div.board {
+  width: 80%;
+  margin: 0 auto;
+}
+h2.title {
+  text-align: center;
+}
+div.search {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin: 0 auto;
+  width: 85%;
+}
+div.rows {
+  display: flex;
+  justify-content: flex-start;
+}

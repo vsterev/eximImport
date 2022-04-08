@@ -1,0 +1,35 @@
+{
+  "name": "clickatell-platform",
+  "author": "Morne Zeelie <morne.zeelie@clickatell.com>",
+  "description": "A simple NodeJs REST & HTTP interaction with Clickatell platform API",
+  "main": "index.js",
+  "version": "2.0.10",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/clickatell/clickatell-node.git"
+  },
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "bugs": "https://github.com/clickatell/clickatell-node/issues",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "bluebird": "^3.7.2",
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "express": "^4.16.1",
+    "express-rate-limit": "^5.3.0",
+    "git": "^0.1.5",
+    "jsonwebtoken": "^8.5.1",
+    "md5": "^2.3.0",
+    "mongoose": "^5.13.2",
+    "node-cron": "^3.0.0",
+    "node-fetch": "^2.6.1",
+    "nodemailer-promise": "^2.0.0",
+    "nodemon": "^2.0.12",
+    "request": "^2.79.0",
+    "xml2js": "^0.4.23"
+  }
+}

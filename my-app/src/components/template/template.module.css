@@ -1,0 +1,35 @@
+div.template {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+h2.title {
+  text-align: center;
+}
+div.children {
+  width: 100%;
+  margin: 0 auto;
+}
+div.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  /* width: 80%; */
+}
+section.mapMenu > ul {
+  list-style: none;
+  /* background: red; */
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+}
+section.mapMenu > p {
+  font-weight: bold;
+  margin: 0;
+}
+section.mapMenu {
+  text-align: center;
+}
+section.mapMenu > ul > li {
+  margin: 0 5px;
+}

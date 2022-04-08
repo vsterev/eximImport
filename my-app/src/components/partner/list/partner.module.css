@@ -1,0 +1,35 @@
+/* div.partner {
+  width: 100%;
+  margin: 0 auto;
+  background: red;
+} */
+div.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 50%;
+  margin: 0 auto;
+}
+table.variablesname {
+  font-size: 12px;
+  margin: 0 auto;
+}
+tr.variablesname {
+  background-color: red;
+}
+p.tableName {
+  text-align: center;
+  margin: 2px;
+  color: #5e81b5;
+  font-weight: 600;
+  font-size: 12px;
+}
+button.variablesname {
+  display: block;
+  margin: 0 auto;
+}
+/* table.variablesname > tbody > tr > td,
+table.variablesname > tbody > tr > td > input {
+  width: 45px;
+  font-size: 12px;
+} */

@@ -1,0 +1,19 @@
+label.register {
+  background-color: rgb(8, 65, 46);
+  align-self: center;
+}
+form.register > fieldset > label {
+  padding-left: 10px;
+}
+div.register {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+div.reg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* width: 25%; */
+  margin: 5px auto;
+}

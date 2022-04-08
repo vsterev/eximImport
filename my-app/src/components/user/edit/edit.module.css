@@ -1,0 +1,16 @@
+div.edit {
+  /* width: 100%; */
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+fieldset.edit {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 50%;
+}
+label {
+  margin: 10px;
+}

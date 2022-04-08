@@ -1,0 +1,15 @@
+div.rows {
+  display: block;
+  /* display: flex; */
+  /* flex-direction: column; */
+  /* align-items: center; */
+  width: 50%;
+  margin: 0 auto;
+  /* background-color: red; */
+}
+h2.selectError {
+  text-align: center;
+}
+div.loading {
+  text-align: center;
+}

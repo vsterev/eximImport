@@ -144,7 +144,8 @@ module.exports = {
         flightOut,
         transferTypeId,
         partner,
-        message
+        message,
+        bookOnlyTransfer
       } = req.body;
       createReservation(
         checkIn,
@@ -160,10 +161,11 @@ module.exports = {
         flightOut,
         transferTypeId,
         partner,
-        message
+        message,
+        bookOnlyTransfer
       )
         .then((r) => {
-          res.status(200).json({ reservKey: r.ExternalID[0], reservName: r.Name[0], status: r.Status[0] });
+          res.status(200).json({ reservKey: r?.ExternalID[0], reservName: r?.Name[0], status: r?.Status[0] });
         })
         .catch((e) => {
           console.log(e);

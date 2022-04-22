@@ -4,7 +4,7 @@ import { Link, useHistory } from 'react-router-dom';
 import iLookServ from '../services/interLook';
 import PartnerContext from '../utils/partnerContext';
 import DeleteIcon from '@material-ui/icons/Delete';
-const Row = ({ k, res }) => {
+const Row = ({ k, res, bookOnlyTransfer }) => {
   const [options, setOptions] = useState([]);
   const [selected, setSelected] = useState(null);
   const [ilParams, setIlParams] = useState(null);
@@ -14,6 +14,7 @@ const Row = ({ k, res }) => {
   const partner = useContext(PartnerContext).partner.code;
 
   const history = useHistory();
+  // console.log({bookOnlyTransfer}, 'rowComponent')
   const searchAct = (a) => {
     const { checkIn, checkOut, tourists, hotel, pansion, flightIn, flightOut, action, transfer } = a;
     // console.log({ checkIn, checkOut, tourists, hotel, pansion, flightIn, flightOut, action, k, transfer, partner });
@@ -41,15 +42,16 @@ const Row = ({ k, res }) => {
       flightOut: res.flightOut,
       tourists: res.tourists,
       transfer: res.transfer,
-      hotelKey: options[selected].hotelKey,
-      acKey: options[selected].acKey,
-      rcKey: options[selected].rcKey,
-      rtKey: options[selected].rtKey,
-      pnKey: options[selected].pnKey,
+      hotelKey: options[selected]?.hotelKey || res.hotel,
+      acKey: options[selected]?.acKey || undefined,
+      rtKey: options[selected]?.rtKey || undefined,
+      rcKey: options[selected]?.rcKey || undefined,
+      pnKey: options[selected]?.pnKey || undefined,
       partnerReservKey: k,
       transferTypeId,
       partner,
-      message: res.message
+      message: res.message,
+      bookOnlyTransfer
     };
     // console.log(bookParams);
     iLookServ
@@ -77,8 +79,10 @@ const Row = ({ k, res }) => {
       .catch(console.log);
   };
   useEffect(() => {
-    searchAct(res);
-  }, [res, k]);
+    if (bookOnlyTransfer==='no'){
+      return searchAct(res);
+    }
+  }, [res, k, bookOnlyTransfer]);
   return (
     <tr>
       <td>{k}</td>
@@ -110,14 +114,14 @@ const Row = ({ k, res }) => {
         <Link to={`/map/transfer-type/${res.transfer}`}>{res.transfer}</Link>
       </td>
       <td>{res.message}</td>
-      {/* <td>
+      {/* <td>bookOnlyTransfer
         <button onClick={() => clickAct(res)}> check</button>
       </td> */}
       <td>
         {/* {!!options?.length > 0 && JSON.stringify(options)} */}
         {!!err && <div style={{ color: 'red', fontWeight: 'bold', fontSize: '13px' }}>{err}</div>}
-        {!!options?.length > 0 && (
-          <select onChange={(e) => setSelected(e.target.value)} disabled={isLoaded || ilParams?.reservName}>
+        {(!!options?.length > 0 && bookOnlyTransfer ==='no' )&& (
+          <select onChange={(e) => setSelected(e.target.value)} disabled={isLoaded || ilParams?.reservName }>
             <option value="">please select</option>
             {options?.map((el, i) => {
               return (
@@ -135,7 +139,7 @@ const Row = ({ k, res }) => {
             variant="contained"
             color="primary"
             size="small"
-            disabled={!selected || !!ilParams?.reservName || isLoaded || options.length === 0}
+            disabled={(!selected && bookOnlyTransfer ==='no') || !!ilParams?.reservName || isLoaded || options.length === 0}
             onClick={bookAct}>
             book
           </Button>

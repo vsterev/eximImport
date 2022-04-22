@@ -93,6 +93,10 @@ const partnerSchema = new mongoose.Schema({
       type: String,
       default: 'voucher',
     },
+    message: {
+      type: String,
+      default: 'message',
+    }
   },
 });
 

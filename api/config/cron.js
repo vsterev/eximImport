@@ -11,27 +11,27 @@ const port = 3300;
 // Schedule tasks to be run on the server.
 cron.schedule('0 0 1 * * *', function () {
   const current = new Date();
-  console.log(`${current.toString().substr(0, 24)} Cron job - sync Boards`);
+  console.log(`${current.toString().substring(0, 24)} Cron job - sync Boards`);
   syncBoardsCron();
 });
 cron.schedule('0 2 1 * * *', function () {
   const current = new Date();
-  console.log(`${current.toString().substr(0, 24)} Cron job - sync Transfer Types`);
+  console.log(`${current.toString().substring(0, 24)} Cron job - sync Transfer Types`);
   syncTransferTypesCron();
 });
 cron.schedule('0 3 1 * * *', function () {
   const current = new Date();
-  console.log(`${current.toString().substr(0, 24)} Cron job - sync Hotels`);
+  console.log(`${current.toString().substring(0, 24)} Cron job - sync Hotels`);
   syncHotelsCron();
 });
 cron.schedule('0 4 1 * * *', function () {
   const current = new Date();
-  console.log(`${current.toString().substr(0, 24)} Cron job - sync Flights`);
+  console.log(`${current.toString().substring(0, 24)} Cron job - sync Flights`);
   syncFlightsCron();
 });
 cron.schedule('0 5 1 * * *', function () {
   const current = new Date();
-  console.log(`${current.toString().substr(0, 24)} Cron job - sync Transfers`);
+  console.log(`${current.toString().substring(0, 24)} Cron job - sync Transfers`);
   syncTransfersCron('exim');
 });
 

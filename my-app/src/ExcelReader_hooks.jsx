@@ -10,9 +10,11 @@ import { Button } from '@material-ui/core';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import ImportExportIcon from '@material-ui/icons/ImportExport';
 import { useHistory } from 'react-router-dom';
+import {EximAccommodationSelect} from './components/shared/EximAccommodationSelect';
 const ExcelReader = () => {
   const [file, setFile] = useState({});
   const [data, setData] = useState(null);
+  const [bookOnlyTransfer, setBookOnlyTransfer] = useState("no")
   const history = useHistory();
   // const [cols, setCols] = useState([]);
   const [isDisabled, setIsDisabled] = useState(true);
@@ -95,7 +97,10 @@ const ExcelReader = () => {
       /* Convert array of arrays */
       const data1 = XLSX.utils.sheet_to_json(ws, { dateNF: 'yyyy.mm.dd', raw: true }).map((row) =>
         Object.keys(row).reduce((obj, key) => {
-          obj[key.trim()] = typeof row[key] === 'string' ? row[key].trim() : row[key];
+          // obj[key.trim()] = typeof row[key] === 'string' ? row[key].trim() : row[key];
+          console.log({partner})
+          partner.code === 'eximpl' ? obj[key] = row[key] : obj[key.trim()] = typeof row[key] === 'string' ? row[key].trim() : row[key];
+        //  obj[key] = row[key];
           return obj;
         }, {})
       );
@@ -146,7 +151,7 @@ const ExcelReader = () => {
 
         return acc;
       }, {});
-      console.log({dataModified});
+      // console.log({dataModified});
       setData(dataModified);
       // setCols(make_cols(ws['!ref']));
     };
@@ -215,6 +220,7 @@ const ExcelReader = () => {
 
         {data && (
           <React.Fragment>
+            <EximAccommodationSelect bookOnlyTransfer={bookOnlyTransfer} setBookOnlyTransfer={setBookOnlyTransfer}/>
             <table>
               <thead>
                 <tr>
@@ -276,7 +282,7 @@ const ExcelReader = () => {
                     //     )}
                     //   </td>
                     // </tr>
-                    <Row key={k} k={k} res={res} />
+                    <Row key={k} k={k} res={res} bookOnlyTransfer={bookOnlyTransfer} />
                   );
                 })}
               </tbody>

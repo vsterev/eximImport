@@ -31,11 +31,8 @@ const syncTransferTypeCron = () => {
       const newTransfersType = transfersType.map((transferType) => {
         const _id = +transferType.ID[0];
         const name = transferType.Name[0];
-        const code = transferType.Code[0];
-        // console.log({ _id, name, code });
         transferTypeModel
-          .findOneAndUpdate({ _id }, { $set: { name, code } }, { upsert: true })
-          // .then(console.log)
+          .findOneAndUpdate({ _id }, { $set: { name } }, { upsert: true })
           .catch(console.log);
       });
       return transfersType;

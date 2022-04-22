@@ -333,7 +333,7 @@ const Partner = ({ setRefreshPartners, refreshPartners }) => {
                               <td>
                                 <input
                                   style={{ width: `${partner?.variablesName?.message?.length}ch` }}
-                                  message="variablesName.message"
+                                  name="variablesName.message"
                                   value={partner?.variablesName?.message}
                                   onChange={(e) => changeHandler(e, i)}
                                 />

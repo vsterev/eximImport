@@ -6,8 +6,10 @@ const { bookingModel } = require('../../models');
 const service = require('../../config/config').ilUrl;
 const connect = require('./connect');
 const MissingIdError = require('../error');
-const createReservationMessage = require('./createReservationMessage')
-const createReservation = (
+const createReservationMessage = require('./createReservationMessage');
+const transferOnlyFindNoNameHotel = require('./transferOnlyFindNoNameHotel');
+
+let createReservation = (
   checkIn,
   checkOut,
   tourists,
@@ -21,7 +23,8 @@ const createReservation = (
   flightOut,
   transferTypeId,
   partner,
-  message
+  message,
+  bookOnlyTransfer
 ) => {
   function diff_month(dt21, dt11) {
     const dt2 = new Date(dt21);
@@ -30,16 +33,16 @@ const createReservation = (
     return (diff /= 60 * 60 * 24);
   }
   const ageType = (str) => {
-    if (str.toLowerCase() === 'mr' || str.toLowerCase() === 'mr.') {
+    if (str.toLowerCase().trim() === 'mr' || str.toLowerCase() === 'mr.') {
       return { type: 'Adult', sex: 'Male' };
     }
-    if (str.toLowerCase() === 'mrs' || str.toLowerCase() === 'mrs.') {
+    if (str.toLowerCase().trim() === 'mrs' || str.toLowerCase() === 'mrs.') {
       return { type: 'Adult', sex: 'Female' };
     }
-    if (str.toLowerCase() === 'chd' || str.toLowerCase() === 'chd.' || str.toLowerCase() === 'child') {
+    if (str.toLowerCase().trim() === 'chd' || str.toLowerCase() === 'chd.' || str.toLowerCase() === 'child') {
       return { type: 'Child', sex: 'Child' };
     }
-    if (str.toLowerCase() === 'inf' || str.toLowerCase() === 'inf.') {
+    if (str.toLowerCase().trim() === 'inf' || str.toLowerCase() === 'inf.') {
       return { type: 'Infant', sex: 'Infant' };
     }
   };
@@ -111,14 +114,14 @@ const createReservation = (
         \t\t<ForeignPassport IssuedBy="" Serie="111" Number="1111111" IssueDate="0001-01-01" EndDate="0001-01-01T00:00:00" />\n
         \t</Tourist>\n
        \t<ParameterPair Key="IsChild">
-			\t\t<Value xsi:type="xsd:boolean">${ageType(el.gender)['type']==="Child"?true:false}</Value>
+			\t\t<Value xsi:type="xsd:boolean">${ageType(el.gender)['type'] === "Child" ? true : false}</Value>
 		   \t</ParameterPair>
         `;
     });
     return str;
   };
 
-  const requestStr = (guid, transferIn, transfereOut, fInID, fOutID) => {
+  const requestStr = (guid, htlId, transferIn, transfereOut, fInID, fOutID) => {
     return `<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
     <soap:Body>
       <CreateReservation xmlns="http://www.megatec.ru/">
@@ -140,14 +143,14 @@ const createReservation = (
               <TouristCount>${tourists.length}</TouristCount>
               <ID>1</ID>
               <Hotel>
-                <ID>${hotelKey}</ID>
+                <ID>${htlId}</ID>
               </Hotel>
               <Room>
-                <RoomTypeID>${rtKey}</RoomTypeID>
-                <RoomCategoryID>${rcKey}</RoomCategoryID>
-                <RoomAccomodationID>${acKey}</RoomAccomodationID>
+                <RoomTypeID>${bookOnlyTransfer === 'yes' ? '69' : rtKey}</RoomTypeID>
+                <RoomCategoryID>${bookOnlyTransfer === 'yes' ? '242' : rcKey}</RoomCategoryID>
+                <RoomAccomodationID>${bookOnlyTransfer === 'yes' ? '13995' : acKey}</RoomAccomodationID>
               </Room>
-              <PansionID>${pnKey}</PansionID>
+              <PansionID>${bookOnlyTransfer === 'yes' ? '40' : pnKey}</PansionID>
             </Service>
             ${transferIn && transfereOut ? transferGenerate(transferIn, transfereOut, fInID, fOutID) : ''}
           </Services>
@@ -164,39 +167,25 @@ const createReservation = (
   </soap:Envelope>
 `;
   };
-  // console.log(requestStr('t'));
-  // return fetch(service, {
-  //   method: 'post',
-  //   body: connectionStr,
-  //   headers: { 'Content-Type': 'text/xml' },
-  // })
-  //   .then((guidRes) => guidRes.text())
-  //   .then((guidXml) => parser.parseStringPromise(guidXml))
+
   return connect(partner)
     .then((guid) => {
-      // const guid = guidParsed['soap:Envelope']['soap:Body'][0]['ConnectResponse'][0]['ConnectResult'][0];
-      if (flightIn) {
-        const transferInfoIn = checkFlight(flightIn, hotelKey, true);
-        const transferInfoOut = checkFlight(flightOut, hotelKey, false);
-        return Promise.all([guid, transferInfoIn, transferInfoOut]);
-      }
-      return Promise.all([guid]);
+      const transferOnlyInfo = bookOnlyTransfer === 'yes' ? transferOnlyFindNoNameHotel(hotelKey, partner) : undefined;
+      return Promise.all([guid, transferOnlyInfo])
     })
-    .then(([guid, transferInfoIn, transferInfoOut]) => {
-      console.log({transferInfoIn});
-      // const [transferIn, flightInId] = transferInfoIn;
-      //----------
-      // if (transferInfoIn[0]) {
-      //   throw new MissingIdError(`flight ${flightIn} is not in IL`);
-      // }
-      // if (transferInfoOut[0]) {
-      //   throw new MissingIdError(`flight ${flightOut} is not in IL`);
-      // }
-      const transferInId = transferInfoIn && transferInfoIn[0]!==null ? transferInfoIn[0]._id : undefined;
+    .then(([guid, transferOnlyInfo]) => {
+      hotelKey = bookOnlyTransfer === 'yes' ? transferOnlyInfo.noNameHotelId : hotelKey;
+      message = bookOnlyTransfer === 'yes' ? transferOnlyInfo.transferHotelName.trim().concat(!!message?` - ${message}`:'') : message;
+      const transferInfoIn = flightIn ? checkFlight(flightIn, hotelKey, true) : undefined;
+      const transferInfoOut = flightIn ? checkFlight(flightOut, hotelKey, false) : undefined;
+      return Promise.all([guid, transferInfoIn, transferInfoOut, hotelKey, message]);
+    })
+    .then(([guid, transferInfoIn, transferInfoOut, hotelKey, message]) => {
+      const transferInId = transferInfoIn && transferInfoIn[0] !== null ? transferInfoIn[0]._id : undefined;
       const flightInId = transferInfoIn ? transferInfoIn[1] : undefined;
-      const transferOutId = transferInfoOut && transferInfoOut[0]!==null? transferInfoOut[0]._id : undefined;
+      const transferOutId = transferInfoOut && transferInfoOut[0] !== null ? transferInfoOut[0]._id : undefined;
       const flightOutId = transferInfoOut ? transferInfoOut[1] : undefined;
-      console.log({ transferInfoIn, transferInfoOut, endPoint: service,createReservation: requestStr(guid, transferInId, transferOutId, flightInId, flightOutId) });
+      console.log({ transferInfoIn, transferInfoOut, endPoint: service, createReservation: requestStr(guid, hotelKey, transferInId, transferOutId, flightInId, flightOutId) });
       if ((flightIn && !flightInId)) {
         throw new MissingIdError(`flight ${flightIn} is not in IL`);
       }
@@ -205,18 +194,18 @@ const createReservation = (
       }
       const fetching = fetch(service, {
         method: 'post',
-        body: requestStr(guid, transferInId, transferOutId, flightInId, flightOutId),
+        body: requestStr(guid, hotelKey, transferInId, transferOutId, flightInId, flightOutId),
         headers: {
           'Content-Type': 'text/xml',
         },
       });
-      return Promise.all([fetching,guid]);
+      return Promise.all([fetching, guid, message]);
     })
-    .then(([res,guid]) => Promise.all([res.text(),guid]))
-    .then(([xml, guid]) => {
-      return Promise.all([parser.parseStringPromise(xml),guid]);
+    .then(([res, guid, message]) => Promise.all([res.text(), guid, message]))
+    .then(([xml, guid, message]) => {
+      return Promise.all([parser.parseStringPromise(xml), guid, message]);
     })
-    .then(([result,guid]) => {
+    .then(([result, guid, message]) => {
       const response =
         result['soap:Envelope']['soap:Body'][0]['CreateReservationResponse'][0]['CreateReservationResult'][0];
       if (!!response) {
@@ -228,13 +217,13 @@ const createReservation = (
         el.partner = partner;
         bookingModel.updateOne({ _id: el['_id'] }, el, { upsert: true }).then(console.log).catch(console.log);
         if (!!message) {
-          createReservationMessage(guid, response['ExternalID'][0], message).then(res=>console.log({res})).catch(err=>console.log({err}))
+          createReservationMessage(guid, response['ExternalID'][0], message);
         }
       }
       return response;
     })
     .catch((err) => {
-      console.log(err);
+      console.log({ msg: 'catch create`Reservation', err });
       if (err instanceof MissingIdError) {
         throw err;
       }

@@ -13,7 +13,7 @@ const HeaderComponent = () => {
       <div className={styles.navigationwrap}>
         <Link to="/" style={{ textDecoration: 'none' }}>
           <div className={styles.navigation}>
-            SBIEP - Solvex Exim Poland Importer <p>ver 1.5</p>
+            SBI - Solvex Booking Importer <p>ver 2.0 Easter update</p>
           </div>
         </Link>
         {!!user?.email && (

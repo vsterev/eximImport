@@ -4,7 +4,7 @@ import { Link, useHistory } from 'react-router-dom';
 import iLookServ from '../services/interLook';
 import PartnerContext from '../utils/partnerContext';
 import DeleteIcon from '@material-ui/icons/Delete';
-const Row = ({ k, res, bookOnlyTransfer }) => {
+const Row = ({ k, res, bookOnlyTransfer, actionSelect }) => {
   const [options, setOptions] = useState([]);
   const [selected, setSelected] = useState(null);
   const [ilParams, setIlParams] = useState(null);
@@ -69,6 +69,7 @@ const Row = ({ k, res, bookOnlyTransfer }) => {
       .catch((er) => console.error(er));
   };
   const cancelAct = () => {
+    // console.log(k, partner)
     setIsLoaded(true);
     iLookServ
       .cancelReserv({ k, partner })
@@ -79,14 +80,14 @@ const Row = ({ k, res, bookOnlyTransfer }) => {
       .catch(console.log);
   };
   useEffect(() => {
-    if (bookOnlyTransfer==='no'){
+    if (bookOnlyTransfer === 'no') {
       return searchAct(res);
     }
-  }, [res, k, bookOnlyTransfer]);
+  }, [res, k, bookOnlyTransfer, actionSelect]);
   return (
     <tr>
       <td>{k}</td>
-      <td>{res.action}</td>
+      <td>{partner === "eximpl" ? actionSelect : res.action}</td>
       <td>
         <Link to="#" onClick={() => history.push(`/map/hotel/${res.hotel}`)}>
           {res.hotel}
@@ -120,8 +121,8 @@ const Row = ({ k, res, bookOnlyTransfer }) => {
       <td>
         {/* {!!options?.length > 0 && JSON.stringify(options)} */}
         {!!err && <div style={{ color: 'red', fontWeight: 'bold', fontSize: '13px' }}>{err}</div>}
-        {(!!options?.length > 0 && bookOnlyTransfer ==='no' )&& (
-          <select onChange={(e) => setSelected(e.target.value)} disabled={isLoaded || ilParams?.reservName }>
+        {(!!options?.length > 0 && bookOnlyTransfer === 'no') && (
+          <select onChange={(e) => setSelected(e.target.value)} disabled={isLoaded || ilParams?.reservName}>
             <option value="">please select</option>
             {options?.map((el, i) => {
               return (
@@ -139,12 +140,13 @@ const Row = ({ k, res, bookOnlyTransfer }) => {
             variant="contained"
             color="primary"
             size="small"
-            disabled={(!selected && bookOnlyTransfer ==='no') || !!ilParams?.reservName || isLoaded || options.length === 0}
+            disabled={(!selected && bookOnlyTransfer === 'no') || !!ilParams?.reservName || isLoaded || options.length === 0}
             onClick={bookAct}>
             book
           </Button>
         )}
         {res.action === 'cancel' && (
+        /* {res.action === 'cancel' || actionSelect === 'cancel' && ( */
           <Button
             variant="contained"
             color="secondary"

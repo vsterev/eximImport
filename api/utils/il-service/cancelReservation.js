@@ -4,6 +4,8 @@ const fetch = require('node-fetch');
 const connect = require('./connect');
 const xml2js = require('xml2js');
 const parser = new xml2js.Parser();
+const MissingIdError = require('../error');
+
 const cancelReservation = (partnerKey, partner) => {
   const str = (token, bKey) => {
     return ` <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
@@ -28,45 +30,45 @@ const cancelReservation = (partnerKey, partner) => {
     })
       .then((res) => res.text())
       .then((xml) => parser.parseStringPromise(xml));
-    //   .then(console.log)
-    // .catch(console.error)
   };
+  let ilNumber = '';
   return (
     bookingModel
       .findOne({ _id: partnerKey, partner })
       .then((reserv) => {
-        const ilNumber = reserv.ilCode;
+        ilNumber = reserv?.ilCode;
         console.log('eeeeeeeeeeeeeeee', ilNumber);
-        if (!!reserv) {
-          const dgKey = reserv.ilKey;
-          return connect(partner).then((guid) => {
-            return cancelFunc(guid, dgKey) //dgKey
-              .then((result) => {
-                const response =
-                  result['soap:Envelope']['soap:Body'][0]['CancelReservationResponse'][0]['CancelReservationResult'][0];
-                //   const response = result['soap:Envelope']['soap:Body'][0]['CancelReservationResult'];
-                if (!!response) {
-                  return bookingModel
-                    .findByIdAndRemove(partnerKey)
-                    .then((r) => {
-                      console.log('removingMongo', r);
-                      return `${ilNumber} - canceled`;
-                    })
-                    .catch(console.log);
-                  // return response;
-                }
-                return 'cancel Error';
-              })
-              .catch(console.log);
-          });
+        if (!reserv) {
+          throw new MissingIdError(`reservation with partner № ${partnerKey} not exists or is allready cancelled`)
         }
-        const pr = new Promise((resolve, reject) => {
-          resolve(`reservation with partner № ${partnerKey} not exists or is allready cancelled`);
-        });
-        return pr;
+        const dgKey = reserv.ilKey;
+        const guid = connect(partner)//tuk
+        return Promise.all([guid, dgKey])
       })
-      // .then((a) => console.log('vasko', a))
-      .catch(console.log)
+      .then(([guid, dgKey]) => {
+        return cancelFunc(guid, dgKey)
+      })
+      .then((result) => {
+        console.log(JSON.stringify(result));
+        const response =
+          result['soap:Envelope']['soap:Body'][0]['CancelReservationResponse'][0]['CancelReservationResult'][0];
+        //   const response = result['soap:Envelope']['soap:Body'][0]['CancelReservationResult'];
+        if (!response) {
+          throw new Error('no correct response from IL API')
+        }
+        return bookingModel
+          .findByIdAndRemove(partnerKey)
+      })
+      .then((r) => {
+        console.log('removingMongo', r);
+        return `${ilNumber} - canceled`;
+      })
+      .catch(err => {
+        console.log('CancelReservation -> ' + err);
+        if (err instanceof MissingIdError) {
+          throw err;
+        }
+      })
   );
 };
 module.exports = cancelReservation;

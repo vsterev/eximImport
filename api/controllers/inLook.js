@@ -122,7 +122,7 @@ module.exports = {
           console.log('sega e tuka 2', err);
           // console.log(err instanceof missingIdError);
           // console.log(err.code);
-          if (err instanceof missingIdError || err.message==='No prices in IL') {
+          if (err instanceof missingIdError || err.message === 'No prices in IL') {
             //or check by err.code will be correct
             res.status(404).json({ err: err.message });
           }
@@ -190,7 +190,12 @@ module.exports = {
       const { partner } = req.body;
       cancelReservation(pKey, partner)
         .then((r) => res.status(200).json({ status: r }))
-        .catch((e) => console.error(e));
+        .catch((e) => {
+          console.error(e);
+          if (e instanceof missingIdError) {
+            res.status(404).json({ err: e.message });
+          }
+        });
     },
   },
   patch: {

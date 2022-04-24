@@ -15,6 +15,7 @@ const ExcelReader = () => {
   const [file, setFile] = useState({});
   const [data, setData] = useState(null);
   const [bookOnlyTransfer, setBookOnlyTransfer] = useState("no")
+  const [actionSelect, setActionSelect] = useState("new")
   const history = useHistory();
   // const [cols, setCols] = useState([]);
   const [isDisabled, setIsDisabled] = useState(true);
@@ -220,7 +221,10 @@ const ExcelReader = () => {
 
         {data && (
           <React.Fragment>
-            <EximAccommodationSelect bookOnlyTransfer={bookOnlyTransfer} setBookOnlyTransfer={setBookOnlyTransfer}/>
+            <EximAccommodationSelect 
+            bookOnlyTransfer={bookOnlyTransfer} setBookOnlyTransfer={setBookOnlyTransfer}
+            actionSelect={actionSelect} setActionSelect={setActionSelect}
+            />
             <table>
               <thead>
                 <tr>
@@ -282,7 +286,7 @@ const ExcelReader = () => {
                     //     )}
                     //   </td>
                     // </tr>
-                    <Row key={k} k={k} res={res} bookOnlyTransfer={bookOnlyTransfer} />
+                    <Row key={k} k={k} res={res} bookOnlyTransfer={bookOnlyTransfer} actionSelect={actionSelect} />
                   );
                 })}
               </tbody>

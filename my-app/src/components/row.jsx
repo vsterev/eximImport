@@ -5,7 +5,7 @@ import iLookServ from '../services/interLook';
 import PartnerContext from '../utils/partnerContext';
 import DeleteIcon from '@material-ui/icons/Delete';
 const Row = ({ k, res, bookOnlyTransfer, actionSelect }) => {
-  res.tourists.sort((a,b)=>new Date(a.birthDate) - new Date(b.birthDate))
+  res.tourists.sort((a, b) => new Date(a.birthDate) - new Date(b.birthDate))
   const [options, setOptions] = useState([]);
   const [selected, setSelected] = useState(null);
   const [ilParams, setIlParams] = useState(null);
@@ -81,6 +81,12 @@ const Row = ({ k, res, bookOnlyTransfer, actionSelect }) => {
       .catch(console.log);
   };
   useEffect(() => {
+    if(partner==='eximpl') {
+      res.action=actionSelect;
+      if(actionSelect==='new'){
+        setErr(null);
+      }
+    }
     if (bookOnlyTransfer === 'no') {
       return searchAct(res);
     }
@@ -136,28 +142,28 @@ const Row = ({ k, res, bookOnlyTransfer, actionSelect }) => {
         )}
       </td>
       <td style={{ textAlign: 'center' }}>
-        {res.action === 'new' && (
-          <Button
-            variant="contained"
-            color="primary"
-            size="small"
-            disabled={(!selected && bookOnlyTransfer === 'no') || !!ilParams?.reservName || isLoaded || options.length === 0}
-            onClick={bookAct}>
-            book
-          </Button>
-        )}
-        {res.action === 'cancel' && (
-        /* {res.action === 'cancel' || actionSelect === 'cancel' && ( */
-          <Button
-            variant="contained"
-            color="secondary"
-            size="small"
-            startIcon={<DeleteIcon />}
-            disabled={err === 'not exists in IL' || !!ilParams?.status || isLoaded}
-            onClick={cancelAct}>
-            cancel
-          </Button>
-        )}
+          {res.action === 'new' && (
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              disabled={(!selected && bookOnlyTransfer === 'no') || !!ilParams?.reservName || isLoaded || options.length === 0}
+              onClick={bookAct}>
+              book
+            </Button>
+          )}
+          {res.action === 'cancel' && (
+            /* {res.action === 'cancel' || actionSelect === 'cancel' && ( */
+            <Button
+              variant="contained"
+              color="secondary"
+              size="small"
+              startIcon={<DeleteIcon />}
+              disabled={err === 'not exists in IL' || !!ilParams?.status || isLoaded}
+              onClick={cancelAct}>
+              cancel
+            </Button>
+          )}
       </td>
       <td>
         {isLoaded && `Loading ...`}

@@ -5,6 +5,7 @@ import iLookServ from '../services/interLook';
 import PartnerContext from '../utils/partnerContext';
 import DeleteIcon from '@material-ui/icons/Delete';
 const Row = ({ k, res, bookOnlyTransfer, actionSelect }) => {
+  res.tourists.sort((a,b)=>new Date(a.birthDate) - new Date(b.birthDate))
   const [options, setOptions] = useState([]);
   const [selected, setSelected] = useState(null);
   const [ilParams, setIlParams] = useState(null);

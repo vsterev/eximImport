@@ -8,13 +8,25 @@ const actionValues = ['new', 'cancel', 'update'];
 
 const mapping = require('./mapReservParams');
 const searchHotelServices = (checkIn, checkOut, hotelName, pansion, tourists, action, id, transfer, partner) => {
-  function diff_years(dt21, dt11) {
-    const dt2 = new Date(dt21);
-    const dt1 = new Date(dt11);
-    var diff = (dt2.getTime() - dt1.getTime()) / 1000;
-    diff /= 60 * 60 * 24;
-    return Math.abs(Math.round(diff / 365.25));
-  }
+  // function diff_years(dt21, dt11) {
+  //   console.log(dt21)
+  //   const dt2 = new Date(dt21);
+  //   const dt1 = new Date(dt11);
+  //   var diff = (dt2.getTime() - dt1.getTime()) / 1000;
+  //   diff /= 60 * 60 * 24;
+  //   return Math.abs(Math.round(diff / 365.25));
+  // }
+  function diff_years(birth, toDate)  {
+    var currentDate = new Date(toDate);
+    var birthDate = new Date(birth);
+    var age = currentDate.getFullYear() - birthDate.getFullYear();
+    var m = currentDate.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && currentDate.getDate() < birthDate.getDate())) 
+    {
+        age--;
+    }
+    return age;
+}
 
   const requestStr = (guid, hotelId, pansionId) => {
   const serializedToruists = tourists.map(el=>{

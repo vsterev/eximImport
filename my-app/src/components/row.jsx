@@ -147,7 +147,7 @@ const Row = ({ k, res, bookOnlyTransfer, actionSelect }) => {
               variant="contained"
               color="primary"
               size="small"
-              disabled={(!selected && bookOnlyTransfer === 'no') || !!ilParams?.reservName || isLoaded || options.length === 0}
+              disabled={(!selected && bookOnlyTransfer === 'no') || (!!ilParams?.reservName && bookOnlyTransfer === 'no') || (isLoaded && bookOnlyTransfer === 'no') || (options.length === 0 && bookOnlyTransfer === 'no')}
               onClick={bookAct}>
               book
             </Button>

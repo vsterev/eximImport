@@ -1,5 +1,5 @@
-// const env = process.env.NODE_ENV || 'production';
-const env = process.env.NODE_ENV || 'development';
+const env = process.env.NODE_ENV || 'production';
+// const env = process.env.NODE_ENV || 'development';
 const DB_PASS = process.env.DB_PASS;
 const DB_USER = process.env.DB_USER;
 const config = {

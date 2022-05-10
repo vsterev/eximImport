@@ -83,9 +83,9 @@ const Row = ({ k, res, bookOnlyTransfer, actionSelect }) => {
   useEffect(() => {
     if(partner==='eximpl') {
       res.action=actionSelect;
-      if(actionSelect==='new'){
-        setErr(null);
-      }
+      // if(actionSelect==='new'){
+      //   setErr(null);
+      // }
     }
     if (bookOnlyTransfer === 'no') {
       return searchAct(res);
@@ -147,7 +147,7 @@ const Row = ({ k, res, bookOnlyTransfer, actionSelect }) => {
               variant="contained"
               color="primary"
               size="small"
-              disabled={(!selected && bookOnlyTransfer === 'no') || (!!ilParams?.reservName && bookOnlyTransfer === 'no') || (isLoaded && bookOnlyTransfer === 'no') || (options.length === 0 && bookOnlyTransfer === 'no')}
+              disabled={(!selected && bookOnlyTransfer === 'no') || (!!ilParams?.reservName && bookOnlyTransfer === 'no') || (isLoaded && bookOnlyTransfer === 'no') || (options.length === 0)}
               onClick={bookAct}>
               book
             </Button>

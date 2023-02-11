@@ -20,9 +20,9 @@ const minPrice = (pageSize, checkIn, checkOut, cityKey, rowIndexFrom, cacheGuid,
   // const cacheGuid = '';
   // console.log(serviceType);
   const url = {
-    eval: 'https://evaluation.solvex.bg/iservice/integrationservice.asmx',
+    eval: 'http://evaluation.solvex.bg:8090/Iservice_test/IntegrationService.asmx',
     prod: 'https://iservice.solvex.bg/IntegrationService.asmx',
-    eval2: 'http://192.168.10.50/integrationservice.asmx',
+    eval2: 'http://iservice.solvex.bg/Iservice_test/IntegrationService.asmx',
   };
   // const service = url['eval'];
   const service = url[serviceType];
@@ -59,7 +59,7 @@ const minPrice = (pageSize, checkIn, checkOut, cityKey, rowIndexFrom, cacheGuid,
         </CityKeys>`:''}
         <Pax>${pax}</Pax>
         ${children.length > 0 ? `<Ages>${children.map((el) => `<int>${el}</int>`)}</Ages>` : ''}
-        <ValidateQuota>true</ValidateQuota>
+        <ValidateQuota>false</ValidateQuota>
         ${!!cacheGuid ? `<CacheGuid>${cacheGuid}</CacheGuid>` : ''}
       </request>
     </SearchHotelServicesMinHotel>

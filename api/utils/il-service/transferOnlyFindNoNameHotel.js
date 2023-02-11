@@ -1,9 +1,10 @@
 const { hotelModel } = require('../../models');
 const transferOnlyFindNoNameHotel = (hotelName, partner) => {
     // console.log ('tuk e, samo transfer - TransferOnly '+hotelKey)
+    console.log({hotelName, partner})
     return hotelModel.findOne({ [`partnersCode.${partner}`]: hotelName })
         .then(htl => {
-            // console.log(htl)
+            console.log("resortID", htl.resortId)
             return Promise.all([hotelModel
                 .findOne({ resortId: htl.resortId, name: { $regex: /no accommo/, $options: 'i' } }),htl])
         })

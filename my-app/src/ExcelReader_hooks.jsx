@@ -94,18 +94,16 @@ const ExcelReader = () => {
       /* Get first worksheet */
       const wsname = wb.SheetNames[0];
       const ws = wb.Sheets[wsname];
-      console.log(ws);
+      // console.log(ws);
       /* Convert array of arrays */
       const data1 = XLSX.utils.sheet_to_json(ws, { dateNF: 'yyyy.mm.dd', raw: true }).map((row) =>
         Object.keys(row).reduce((obj, key) => {
           // obj[key.trim()] = typeof row[key] === 'string' ? row[key].trim() : row[key];
-          console.log({partner})
           partner.code === 'eximpl' ? obj[key] = row[key] : obj[key.trim()] = typeof row[key] === 'string' ? row[key].trim() : row[key];
-        //  obj[key] = row[key];
+          if (partner.code === 'exim' && key==='voucher_no') { obj[key] = `${obj[key]}-${row['room_id']}` }
           return obj;
         }, {})
       );
-      console.log({data1});
       /* Update state */
       if (partner.code==='exim' && ! data1[0].hasOwnProperty('voucher_no')) {
         console.log(`${partner.code} tuk handle error`)

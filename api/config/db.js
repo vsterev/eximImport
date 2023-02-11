@@ -6,5 +6,6 @@ module.exports = function () {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
+    useCreateIndex: true
   });
 };

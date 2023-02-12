@@ -36,11 +36,20 @@ const ExcelReader = () => {
       const year = d.substr(0, 4);
       const month = d.substr(4, 2);
       const date = d.substr(6, 2);
-      return new Date(year, month - 1, date).toLocaleDateString('en-CA', {
+      const newDate = new Date(year, month - 1, date).toLocaleDateString('en-CA', {
         year: 'numeric',
         month: 'numeric',
         day: 'numeric',
       });
+      console.log(newDate)
+      return newDate;
+    }
+    if (partner.code === 'exim' && (typeof d !== 'number')) {
+      console.log('tuk4', d,{format: d instanceof Date} )
+      console.log(d.toLocaleDateString().substring(0,10))
+      const [day, month, year] = d.toLocaleDateString('ro').substring(0,10).split('.');
+      console.log({ month, day, year})
+      return year+'-'+month+'-'+day;
     }
     if (d instanceof Date) {
       console.log('tuk1', d)
@@ -100,7 +109,7 @@ const ExcelReader = () => {
         Object.keys(row).reduce((obj, key) => {
           // obj[key.trim()] = typeof row[key] === 'string' ? row[key].trim() : row[key];
           partner.code === 'eximpl' ? obj[key] = row[key] : obj[key.trim()] = typeof row[key] === 'string' ? row[key].trim() : row[key];
-          if (partner.code === 'exim' && key==='voucher_no') { obj[key] = `${obj[key]}-${row['room_id']}` }
+          if (partner.code === 'exim' && key==='voucher_no' && row['room_id']) { obj[key] = `${obj[key]}${row['room_id']}` }
           return obj;
         }, {})
       );
@@ -114,7 +123,7 @@ const ExcelReader = () => {
         return history.push('/error', { msg: `invalid template for ${partner.name}` });
       }
       const dataModified = data1.reduce((acc, val) => {
-        if (!acc[val[partner?.variablesName?.voucher]]) {
+        if (!acc[val[partner?.variablesName?.voucher]]) { 
           acc[val[partner?.variablesName?.voucher]] = {
             hotel: val[partner?.variablesName?.hotel],
             checkIn: datePreformat(val[partner?.variablesName?.checkIn]),

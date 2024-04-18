@@ -143,10 +143,10 @@ const ExcelReader = () => {
         }
         acc[val[partner?.variablesName?.voucher]].tourists.push({
           name: !val[partner?.variablesName?.familyName]
-            ? val[partner?.variablesName?.name].split(' ')[1]
+            ? val[partner?.variablesName?.name].split(' ')[0]
             : val[partner?.variablesName?.name],
           familyName: !val[partner?.variablesName?.familyName]
-            ? val[partner?.variablesName?.name].split(' ')[0]
+            ? val[partner?.variablesName?.name].split(' ')[1]
             : val[partner?.variablesName?.familyName],
           gender: val[partner?.variablesName?.gender],
           // birthDate: val[partner?.variablesName?.birthDate] ? val[partner?.variablesName?.birthDate] : undefined,
